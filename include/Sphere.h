@@ -10,15 +10,15 @@ public:
   Sphere(Point3 cen, double r)
     : center(cen), radius(r) {};
   
-  virtual bool hit(const Ray& r, 
-    double t_min, double t_max, HitRecord& rec) const override;
+  virtual bool hit(const Ray<double>& r, 
+    double tMin, double tMax, HitRecord& rec) const override;
   
   Point3 center;
   double radius;
-}
+};
 
-bool Sphere::hit(const Ray& r, 
-    double t_min, double t_max, HitRecord& rec){
+inline bool Sphere::hit(const Ray<double>& r, 
+    double tMin, double tMax, HitRecord& rec) const {
     Vec3<double> oc = r.origin() - center;
     auto a = r.direction().length_squared();
     auto half_b = dot(oc, r.direction());
@@ -30,15 +30,16 @@ bool Sphere::hit(const Ray& r,
 
     // Find the nearest root that lies in the acceptable range.
     auto root = (-half_b - sqrtd) / a;
-    if (root < t_min || t_max < root) {
+    if (root < tMin || tMax < root) {
         root = (-half_b + sqrtd) / a;
-        if (root < t_min || t_max < root)
+        if (root < tMin || tMax < root)
             return false;
     }
 
     rec.t = root;
     rec.p = r.at(rec.t);
-    rec.normal = (rec.p - center) / radius;
+    Vec3<double> outwardNormal = (rec.p - center) / radius;
+    rec.set_face_normal(r, outwardNormal);
 
     return true;
 }

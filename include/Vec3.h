@@ -9,7 +9,7 @@ using std::sqrt;
 template<typename T>
 class Vec3{
 public:
-  Vec3()  : e(0,0,0) {}
+  Vec3()  : e{0,0,0} {}
   Vec3(T e0, T e1, T e2) : e{e0, e1, e2} {}
 
   T x() const { return e[0]; }
