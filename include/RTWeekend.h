@@ -18,9 +18,6 @@ inline double degrees_to_radians(double degrees){
   return degrees * PI / 180.0;
 }
 
-#include "Ray.h"
-#include "Vec3.h"
-
 /// Return a random real in [0,1)
 template<typename T>
 inline T random(){
@@ -41,5 +38,8 @@ inline T clamp(T x, T min, T max){
   if (x > max)  return max;
   return x;
 }
+
+#include "Ray.h"
+#include "Vec3.h"
 
 #endif /* RTWEEKEND_H */

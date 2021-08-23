@@ -46,6 +46,14 @@ public:
     return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
   }
 
+  inline static Vec3<T> rand(){
+    return Vec3<T>(random(), random(), random());
+  }
+
+  inline static Vec3<T> rand(T min, T max){
+    return Vec3<T>(random(min, max), random(min, max), random(min, max));
+  }
+
   T e[3];
 };
 
@@ -100,6 +108,16 @@ inline Vec3<T> cross(const Vec3<T> &u, const Vec3<T> &v) {
 template<typename T>
 inline Vec3<T> unit_vector(Vec3<T> v) {
   return v / v.length();
+}
+
+template<typename T>
+Vec3<T> random_in_unit_sphere(){
+  while (1){
+    Vec3<T> p = Vec3<T>::rand(-1., 1.);
+    if (p.length_squared() >= 1)
+      continue;
+    return p;
+  }
 }
 
 #endif /* VEC3_H */

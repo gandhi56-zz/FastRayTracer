@@ -1,6 +1,7 @@
 #include "RTWeekend.h"
 #include "Color.h"
 #include "HittableList.h"
+#include "Ray.h"
 #include "Sphere.h"
 #include "Vec3.h"
 #include <cstdlib>
@@ -9,8 +10,10 @@
 
 Color ray_color(const Ray<double>& r, const Hittable& world){
   HitRecord rec;
-  if (world.hit(r, 0, INF, rec))
-    return 0.5 * (rec.normal + Color(1,1,1));
+  if (world.hit(r, 0, INF, rec)){
+    Point3 target = rec.p + rec.normal + random_in_unit_sphere<double>();
+    return 0.5 * ray_color(Ray<double>(rec.p, target - rec.p), world);
+  }
   Vec3<double> unit_direction = unit_vector(r.direction());
   auto t = 0.5 * (unit_direction.y() + 1.0);
   return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
