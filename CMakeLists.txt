@@ -7,3 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 include_directories(include)
 add_executable(raytracer src/raytracer.cc)
+
+enable_testing()
+add_test(NAME raytracer
+         COMMAND raytracer)

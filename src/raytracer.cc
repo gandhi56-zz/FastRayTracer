@@ -27,7 +27,7 @@ Color ray_color(const Ray<double>& r, const Hittable& world, int depth){
 int main(){
   // image
   const auto aspect_ratio = 16.0 / 9.0;
-  const int image_width = 480;
+  const int image_width = 1280;
   const int image_height = static_cast<int>(image_width / aspect_ratio);
   const int samples_per_pixel = 50;
   const int max_depth = 30;
