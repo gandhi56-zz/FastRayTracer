@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <math.h>
 #include <random>
 #include "RTWeekend.h"
 
@@ -123,6 +124,7 @@ inline Vec3<T> unit_vector(Vec3<T> v) {
   return v / v.length();
 }
 
+/// Lambertian diffuse method
 template<typename T>
 inline Vec3<T> random_in_unit_sphere(){
   while (1){
@@ -130,4 +132,18 @@ inline Vec3<T> random_in_unit_sphere(){
     if (p.length_squared() >= 1)  continue;
     return p;
   }
+}
+
+template<typename T>
+Vec3<T> random_unit_vector(){
+  return unit_vector(random_in_unit_sphere<T>());
+}
+
+/// Uniform scatter method
+template<typename T>
+Vec3<T> random_in_hemisphere(const Vec3<T>& normal){
+  Vec3<T> inUnitSphere = random_in_unit_sphere<T>();
+  if (dot(inUnitSphere, normal) < 0.0)
+    return inUnitSphere;
+  return -inUnitSphere;
 }
