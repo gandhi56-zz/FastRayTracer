@@ -1,6 +1,4 @@
-#ifndef RAY_H
-#define RAY_H
-
+#pragma once
 #include "Vec3.h"
 
 template<typename T>
@@ -22,5 +20,3 @@ public:
   Point3 orig;
   Vec3<T> dir;
 };
-
-#endif
