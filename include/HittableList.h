@@ -31,7 +31,7 @@ public:
   std::vector<shared_ptr<Hittable>> objects;
 };
 
-bool HittableList::hit(const Ray<double>& r, 
+inline bool HittableList::hit(const Ray<double>& r, 
   double tMin, double tMax, HitRecord& rec) const {
   HitRecord tmpRec;
   bool hitAnything = false;

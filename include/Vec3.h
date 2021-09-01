@@ -1,10 +1,23 @@
-#ifndef VEC3_H
-#define VEC3_H
+#pragma once
 
 #include <cmath>
 #include <iostream>
+#include <random>
+#include "RTWeekend.h"
 
 using std::sqrt;
+
+/// Return a random real in [0,1)
+inline double random_dbl(){
+  static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+  static std::mt19937 generator;
+  return distribution(generator);
+}
+
+/// Return a random real in [min, max)
+inline double random_dbl(double min, double max){
+  return min + (max - min) * random_dbl();
+}
 
 template<typename T>
 class Vec3{
@@ -44,6 +57,14 @@ public:
 
   T length_squared() const {
     return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+  }
+
+  inline static Vec3<T> rand(){
+    return Vec3<T>(random_t<T>(), random_t<T>(), random_t<T>());
+  }
+
+  inline static Vec3<T> rand(T min, T max){
+    return Vec3<T>(random_t(min, max), random_t(min, max), random_t(min, max));
   }
 
   T e[3];
@@ -102,4 +123,11 @@ inline Vec3<T> unit_vector(Vec3<T> v) {
   return v / v.length();
 }
 
-#endif /* VEC3_H */
+template<typename T>
+inline Vec3<T> random_in_unit_sphere(){
+  while (1){
+    auto p = Vec3<T>::rand(-1., 1.);
+    if (p.length_squared() >= 1)  continue;
+    return p;
+  }
+}

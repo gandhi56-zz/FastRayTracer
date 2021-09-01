@@ -1,5 +1,4 @@
-#ifndef RTWEEKEND_H
-#define RTWEEKEND_H
+#pragma once
 
 #include <cstdlib>
 #include <cmath>
@@ -18,23 +17,6 @@ inline double degrees_to_radians(double degrees){
   return degrees * PI / 180.0;
 }
 
-#include "Ray.h"
-#include "Vec3.h"
-
-/// Return a random real in [0,1)
-template<typename T>
-inline T random(){
-  static std::uniform_real_distribution<T> distribution((T)0, (T)1);
-  static std::mt19937 generator;
-  return distribution(generator);
-}
-
-/// Return a random real in [min, max)
-template<typename T>
-inline T random(T min, T max){
-  return min + (max - min) * random<T>();
-}
-
 template<typename T>
 inline T clamp(T x, T min, T max){
   if (x < min)  return min;
@@ -42,4 +24,14 @@ inline T clamp(T x, T min, T max){
   return x;
 }
 
-#endif /* RTWEEKEND_H */
+template<typename T>
+inline T random_t(){
+  static std::uniform_real_distribution<T> distribution((T)0.0, (T)1.0);
+  static std::mt19937 generator;
+  return distribution(generator);
+}
+
+template<typename T>
+inline double random_t(T min, T max){
+  return min + (max - min) * random_t<T>();
+}
