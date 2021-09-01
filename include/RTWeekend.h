@@ -5,8 +5,6 @@
 #include <limits>
 #include <memory>
 #include <random>
-#include "Ray.h"
-#include "Vec3.h"
 
 using std::shared_ptr;
 using std::make_shared;
@@ -24,4 +22,16 @@ inline T clamp(T x, T min, T max){
   if (x < min)  return min;
   if (x > max)  return max;
   return x;
+}
+
+template<typename T>
+inline T random_t(){
+  static std::uniform_real_distribution<T> distribution((T)0.0, (T)1.0);
+  static std::mt19937 generator;
+  return distribution(generator);
+}
+
+template<typename T>
+inline double random_t(T min, T max){
+  return min + (max - min) * random_t<T>();
 }

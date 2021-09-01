@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <random>
+#include "RTWeekend.h"
 
 using std::sqrt;
 
@@ -58,12 +59,12 @@ public:
     return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
   }
 
-  inline static Vec3<double> rand(){
-    return Vec3<double>(random_dbl(), random_dbl(), random_dbl());
+  inline static Vec3<T> rand(){
+    return Vec3<T>(random_t<T>(), random_t<T>(), random_t<T>());
   }
 
-  inline static Vec3<double> rand(double min, double max){
-    return Vec3<double>(random_dbl(min, max), random_dbl(min, max), random_dbl(min, max));
+  inline static Vec3<T> rand(T min, T max){
+    return Vec3<T>(random_t(min, max), random_t(min, max), random_t(min, max));
   }
 
   T e[3];
@@ -122,9 +123,10 @@ inline Vec3<T> unit_vector(Vec3<T> v) {
   return v / v.length();
 }
 
-inline Vec3<double> random_in_unit_sphere(){
+template<typename T>
+inline Vec3<T> random_in_unit_sphere(){
   while (1){
-    Vec3<double> p = Vec3<double>::rand(-1., 1.);
+    auto p = Vec3<T>::rand(-1., 1.);
     if (p.length_squared() >= 1)  continue;
     return p;
   }
