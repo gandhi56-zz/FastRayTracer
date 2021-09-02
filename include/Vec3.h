@@ -68,6 +68,12 @@ public:
     return Vec3<T>(random_t(min, max), random_t(min, max), random_t(min, max));
   }
 
+  /// returns true if the vector is close to zero in all dimensions
+  bool near_zero() const {
+    const auto eps = 1e-8;
+    return (fabs(e[0]) < eps) && (fabs(e[1]) < eps) && (fabs(e[2]) < eps);
+  }
+
   T e[3];
 };
 
@@ -146,4 +152,9 @@ Vec3<T> random_in_hemisphere(const Vec3<T>& normal){
   if (dot(inUnitSphere, normal) < 0.0)
     return inUnitSphere;
   return -inUnitSphere;
+}
+
+template<typename T>
+Vec3<T> reflect(const Vec3<T>& v, const Vec3<T>& n){
+  return v - 2 * dot(v, n) * n;
 }
