@@ -9,5 +9,11 @@ include_directories(include)
 add_executable(raytracer src/raytracer.cc)
 
 enable_testing()
-add_test(NAME raytracer
-         COMMAND raytracer)
+add_test(NAME raytracer960
+         COMMAND raytracer --width=960)
+add_test(NAME raytracer1280
+         COMMAND raytracer --width=1280)
+add_test(NAME raytracer1920
+         COMMAND raytracer --width=1920)
+add_test(NAME raytracer3840
+         COMMAND raytracer --width=3840)
