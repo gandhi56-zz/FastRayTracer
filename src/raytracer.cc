@@ -5,8 +5,10 @@
 #include "Sphere.h"
 #include "Vec3.h"
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include "Camera.h"
+#include "cxxopts.hpp"
 
 Color ray_color(const Ray<double>& r, const Hittable& world, int depth){
   HitRecord rec;
@@ -24,13 +26,43 @@ Color ray_color(const Ray<double>& r, const Hittable& world, int depth){
   return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
 }
 
-int main(){
+int main(int argc, const char** argv){
   // image
-  const auto aspect_ratio = 16.0 / 9.0;
-  const int image_width = 1280;
-  const int image_height = static_cast<int>(image_width / aspect_ratio);
-  const int samples_per_pixel = 50;
-  const int max_depth = 30;
+  auto aspectRatio = 16.0 / 9.0;
+  int imageWidth = 1280;
+  int imageHeight = 720;
+  int samplesPerPixel = 50;
+  int maxDepth = 30;
+  std::ofstream outputFile;
+
+  cxxopts::Options opts(argv[0], "FastRayTracer by Anshil\n");
+  opts.add_options()
+      ("h,help", "Print usage")
+      ("o,output", "Write output to ", 
+        cxxopts::value<std::string>()->default_value("render.ppm"))
+      ("s,spp", "Samples per pixel", 
+        cxxopts::value<int>()->default_value("50"))
+      ("w,width", "Set width of the render", 
+        cxxopts::value<int>()->default_value("1280"));
+
+  auto result = opts.parse(argc, argv);
+
+  if (result.count("help")){
+    std::cout << opts.help() << std::endl;
+    return 0;
+  }
+  if (result.count("output")){
+
+  }
+  if (result.count("spp")){
+    samplesPerPixel = result["spp"].as<int>();
+  }
+  if (result.count("width")){
+    imageWidth = result["width"].as<int>();
+    imageHeight = static_cast<int>(imageWidth / aspectRatio);
+  }
+
+  outputFile.open(result["output"].as<std::string>(), std::ios::out);
 
   // world
   HittableList world;
@@ -41,19 +73,21 @@ int main(){
   Camera cam;
 
   // render
-  std::cerr << "Rendering a " << image_width << " x " << image_height << " image\n";
-  std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
-  for (int j = image_height - 1; j >= 0; --j){
+  std::cerr << "Resolution: " << imageWidth << " x " << imageHeight << '\n';
+  std::cerr << "Samples per pixel: " << samplesPerPixel << '\n';
+  std::cerr << "Aspect ratio: 16:9\n";
+  outputFile << "P3\n" << imageWidth << ' ' << imageHeight << "\n255\n";
+  for (int j = imageHeight - 1; j >= 0; --j){
     std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-    for (int i = 0; i < image_width; ++i){
+    for (int i = 0; i < imageWidth; ++i){
       Color pixelColor(0,0,0);
-      for (int s = 0; s < samples_per_pixel; ++s){
-        auto u = (i + random_t<double>()) / (image_width - 1);
-        auto v = (j + random_t<double>()) / (image_height - 1);
+      for (int s = 0; s < samplesPerPixel; ++s){
+        auto u = (i + random_t<double>()) / (imageWidth - 1);
+        auto v = (j + random_t<double>()) / (imageHeight - 1);
         Ray<double> r = cam.getRay(u, v);
-        pixelColor += ray_color(r, world, max_depth);
+        pixelColor += ray_color(r, world, maxDepth);
       }
-      write_color(std::cout, pixelColor, samples_per_pixel);
+      write_color(outputFile, pixelColor, samplesPerPixel);
     }
   }
   return 0;
