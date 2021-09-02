@@ -158,3 +158,21 @@ template<typename T>
 Vec3<T> reflect(const Vec3<T>& v, const Vec3<T>& n){
   return v - 2 * dot(v, n) * n;
 }
+
+/// Return the direction of the refracted vector as a vector
+template<typename T>
+Vec3<T> refract(const Vec3<T>& uv, const Vec3<T>& n, double etai_over_etat) {
+    auto cosTheta = fmin(dot(-uv, n), 1.0);
+    Vec3<T> outputRayPerp =  etai_over_etat * (uv + cosTheta*n);
+    Vec3<T> outputRayParallel = -sqrt(fabs(1.0 - outputRayPerp.length_squared())) * n;
+    return outputRayPerp + outputRayParallel;
+}
+
+template<typename T>
+Vec3<T> random_in_unit_disk(){
+  while (1){
+    auto p = Vec3(random_dbl(-1., 1.), random_dbl(-1., 1.), 0.0);
+    if (p.length_squared() >= 1)  continue;
+    return p;
+  }
+}

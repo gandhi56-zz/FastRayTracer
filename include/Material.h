@@ -53,3 +53,40 @@ public:
   Color albedo;
   double fuzz;
 };
+
+class Dielectric : public Material {
+public:
+  Dielectric(double index_of_refraction) : ir(index_of_refraction) {}
+
+  virtual bool scatter(
+      const Ray<double>& r_in, const HitRecord& rec, Color& attenuation, Ray<double>& scattered
+  ) const override {
+    attenuation = Color(1.0, 1.0, 1.0);
+    double refraction_ratio = rec.frontFace ? (1.0/ir) : ir;
+
+    auto unit_direction = unit_vector(r_in.direction());
+    double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
+    double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+
+    bool cannot_refract = refraction_ratio * sin_theta > 1.0;
+    Vec3<double> direction;
+
+    if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_dbl())
+        direction = reflect(unit_direction, rec.normal);
+    else
+        direction = refract(unit_direction, rec.normal, refraction_ratio);
+
+    scattered = Ray(rec.p, direction);
+    return true;
+  }
+
+private:
+  static double reflectance(double cosine, double refIdx){
+    auto r0 = (1 - refIdx) / (1 + refIdx);
+    r0 = r0 * r0;
+    return r0 + (1 - r0) * pow((1 - cosine), 5);
+  }
+
+public:
+  double ir; // Index of Refraction
+};
