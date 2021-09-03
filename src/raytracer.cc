@@ -11,6 +11,8 @@
 #include "cxxopts.hpp"
 #include "Material.h"
 
+#include <CL/cl.h>
+
 Color ray_color(const Ray<double>& r, const Hittable& world, int depth){
   HitRecord rec;
 
@@ -77,11 +79,20 @@ HittableList random_scene() {
 }
 
 int main(int argc, const char** argv){
+  // Get platform and device information
+  cl_platform_id platform_id = NULL;
+  cl_device_id device_id = NULL;   
+  cl_uint ret_num_devices;
+  cl_uint ret_num_platforms;
+  cl_int ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
+  ret = clGetDeviceIDs( platform_id, CL_DEVICE_TYPE_DEFAULT, 1, 
+          &device_id, &ret_num_devices);
+
   // image
   auto aspectRatio = 3. / 2.;
-  int imageWidth = 1280;
-  int imageHeight = 720;
-  int samplesPerPixel = 50;
+  int imageWidth = 960;
+  int imageHeight = 640;
+  int samplesPerPixel = 30;
   int maxDepth = 50;
   std::ofstream outputFile;
 
@@ -91,18 +102,15 @@ int main(int argc, const char** argv){
       ("o,output", "Write output to ", 
         cxxopts::value<std::string>()->default_value("render.ppm"))
       ("s,spp", "Samples per pixel", 
-        cxxopts::value<int>()->default_value("50"))
+        cxxopts::value<int>()->default_value("30"))
       ("w,width", "Set width of the render", 
-        cxxopts::value<int>()->default_value("1280"));
+        cxxopts::value<int>()->default_value("960"));
 
   auto result = opts.parse(argc, argv);
 
   if (result.count("help")){
     std::cout << opts.help() << std::endl;
     return 0;
-  }
-  if (result.count("output")){
-
   }
   if (result.count("spp")){
     samplesPerPixel = result["spp"].as<int>();
@@ -126,7 +134,7 @@ int main(int argc, const char** argv){
   // render
   std::cerr << "Resolution: " << imageWidth << " x " << imageHeight << '\n';
   std::cerr << "Samples per pixel: " << samplesPerPixel << '\n';
-  std::cerr << "Aspect ratio: 16:9\n";
+  std::cerr << "Aspect ratio: " << aspectRatio << '\n';
   outputFile << "P3\n" << imageWidth << ' ' << imageHeight << "\n255\n";
   for (int j = imageHeight - 1; j >= 0; --j){
     std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
