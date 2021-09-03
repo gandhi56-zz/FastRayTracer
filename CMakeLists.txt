@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 find_package(OpenCL REQUIRED)
 include_directories(include)
-add_executable(raytracer src/raytracer.cc)
+add_executable(raytracer src/raytracer.cc src/Image.cc)
 target_link_libraries(raytracer OpenCL::OpenCL)
 
 enable_testing()
