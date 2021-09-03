@@ -43,7 +43,8 @@ void Image::printInfo() {
 
 std::ostream &operator<<(std::ostream &out, const Image &img) {
   out << "P3\n" << img.width << ' ' << img.height << "\n255\n";
-  for (auto it = img.data.rbegin(); it != img.data.rend(); ++it)
-    write_color(out, *it, img.samplesPerPixel);
+  for (int j = img.height - 1; j >= 0; --j)
+    for (int i = 0; i < img.width; ++i)
+      write_color(out, img.data[i + j * img.width], img.samplesPerPixel);
   return out;
 }
